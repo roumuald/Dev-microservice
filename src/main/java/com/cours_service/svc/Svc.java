@@ -97,10 +97,10 @@ public class Svc {
     /**
      * Detail sur un cours
      * @param id
-     */
+
     public Cours selectCoursById(Long id){
         Optional<Cours> cours = coursRepository.findById(id);
         if (cours.isEmpty()) throw new RuntimeException("Aucun cours avec l'identifiant "+ id);
         return cours.orElse(null);
-    }
+    }*/
 }
