@@ -116,6 +116,7 @@ public class Svc {
             u.get().setFirstName(utilisateur.getFirstName());
             u.get().setLastName(utilisateur.getLastName());
             u.get().setBirthDate(utilisateur.getBirthDate());
+            u.get().setDel_yn(DEL_YN.N);
         }
         Utilisateur user = utilisateurRepository.findByEmail(u.get().getEmail());
         if (user!=null) throw new RuntimeException("L'email "+ u.get().getEmail()+ "existe deja !!!");
