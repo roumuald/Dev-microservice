@@ -1,6 +1,7 @@
 package com.utilisateur_service.service;
 
 import com.utilisateur_service.entity.Utilisateur;
+import com.utilisateur_service.enumeration.DEL_YN;
 import com.utilisateur_service.enumeration.Role;
 import com.utilisateur_service.repository.UtilisateurRepository;
 import lombok.AllArgsConstructor;
@@ -29,8 +30,9 @@ public class Svc {
     public Utilisateur insertUtilisateur(Utilisateur utilisateur){
         Utilisateur u = utilisateurRepository.findByEmail(utilisateur.getEmail());
         if (u!=null) {
-            throw new RuntimeException("L'addresse email : " + u.getEmail() + "existe deja");
+            throw new RuntimeException("L'addresse email>>>>> " + u.getEmail() + ">>>>>>>existe deja");
         }else {
+            utilisateur.setDel_yn(DEL_YN.N);
             u = utilisateurRepository.save(utilisateur);
         }
         return u;
@@ -48,7 +50,7 @@ public class Svc {
             throw new RuntimeException("Pas d'utilisateur disponible en base de donnees");
         }else {
             for (Utilisateur utilisateur: utilisateurList){
-                if (utilisateur.getRole()== Role.ETUDIANT){
+                if (utilisateur.getRole().equals(Role.ETUDIANT)&&utilisateur.getDel_yn().equals(DEL_YN.N)){
                     users.add(utilisateur);
                 }
             }
@@ -68,11 +70,12 @@ public class Svc {
             throw new RuntimeException("Pas d'utilisateur disponible en base de donnees");
         }else {
             for (Utilisateur utilisateur: utilisateurList){
-                if (utilisateur.getRole()== Role.ENSEIGNANT){
+                if (utilisateur.getRole().equals(Role.ENSEIGNANT)&&utilisateur.getDel_yn().equals(DEL_YN.N)){
                     users.add(utilisateur);
                 }
             }
         }
+
         return users;
     }
 
@@ -88,7 +91,7 @@ public class Svc {
             throw new RuntimeException("Pas d'utilisateur disponible en base de donnees");
         }else {
             for (Utilisateur utilisateur: utilisateurList){
-                if (utilisateur.getRole()== Role.DIRECTEUR){
+                if (utilisateur.getRole().equals(Role.DIRECTEUR)&&utilisateur.getDel_yn().equals(DEL_YN.N)){
                     users.add(utilisateur);
                 }
             }
@@ -121,7 +124,7 @@ public class Svc {
     }
 
     /**
-     * Methode de mise a jour d'un utilisateur
+     * Methode de suppression d'un utilisateur
      * @param id
      */
     public void deleteUtilisateur(Long id){
@@ -129,7 +132,8 @@ public class Svc {
         if (u.isEmpty()){
             throw new RuntimeException("Cet utilisateur n'existe pas !!!");
         }else {
-            utilisateurRepository.delete(u.get());
+            u.get().setDel_yn(DEL_YN.Y);
+            utilisateurRepository.save(u.get());
         }
     }
 
@@ -149,7 +153,7 @@ public class Svc {
      */
     public Utilisateur selectUtilisateurById(Long id){
         Optional<Utilisateur> utilisateur = utilisateurRepository.findById(id);
-        if (utilisateur.isEmpty()) throw new RuntimeException("Aucun utilisateur avec l'email "+ id);
+        if (utilisateur.isEmpty()) throw new RuntimeException("Aucun utilisateur avec l'indentifiant>>>>>> "+ id);
         return utilisateur.orElse(null);
     }
 }

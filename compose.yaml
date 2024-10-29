@@ -6,4 +6,4 @@ services:
       - 'POSTGRES_PASSWORD=nnr@'
       - 'POSTGRES_USER=nnr'
     ports:
-      - '5432'
+      - '1500:5432'

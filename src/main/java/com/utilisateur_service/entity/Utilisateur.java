@@ -1,6 +1,7 @@
 package com.utilisateur_service.entity;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
+import com.utilisateur_service.enumeration.DEL_YN;
 import com.utilisateur_service.enumeration.Role;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Email;
@@ -40,4 +41,8 @@ public class Utilisateur {
 
     @Enumerated(EnumType.STRING)
     private Role role;
+
+    @Enumerated(EnumType.STRING)
+    private DEL_YN del_yn; //Suppression O/N
+
 }
