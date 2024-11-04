@@ -5,6 +5,7 @@ import com.utilisateur_service.enumeration.DEL_YN;
 import com.utilisateur_service.enumeration.Role;
 import com.utilisateur_service.repository.UtilisateurRepository;
 import lombok.AllArgsConstructor;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -22,6 +23,7 @@ import java.util.Optional;
 public class Svc {
 
     private UtilisateurRepository utilisateurRepository;
+    private PasswordEncoder passwordEncoder;
 
     /**
      * Methode pour enregistrer un utilisateur
@@ -33,6 +35,7 @@ public class Svc {
             throw new RuntimeException("L'addresse email>>>>> " + u.getEmail() + ">>>>>>>existe deja");
         }else {
             utilisateur.setDel_yn(DEL_YN.N);
+            utilisateur.setPassword(passwordEncoder.encode(utilisateur.getPassword()));
             u = utilisateurRepository.save(utilisateur);
         }
         return u;
