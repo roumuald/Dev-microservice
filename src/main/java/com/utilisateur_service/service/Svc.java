@@ -157,4 +157,14 @@ public class Svc {
         if (utilisateur.isEmpty()) throw new RuntimeException("Aucun utilisateur avec l'indentifiant>>>>>> "+ id);
         return utilisateur.orElse(null);
     }
+
+    public Utilisateur selectEtudiantById(Long id){
+        List<Utilisateur> utilisateurs =this.selectEtudiant();
+        for (Utilisateur u:utilisateurs){
+            if (id.equals(u.getId())){
+                return u;
+            }
+        }
+        return null;
+    }
 }

@@ -7,11 +7,12 @@ import lombok.AllArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @RestController
 @AllArgsConstructor
-@RequestMapping("/utilisateur-service")
 public class Crt {
 
     private Svc svc;
@@ -63,5 +64,18 @@ public class Crt {
     public ResponseEntity<Void> deleteUtilisateur(@PathVariable Long id) {
         svc.deleteUtilisateur(id);
         return ResponseEntity.noContent().build();
+    }
+
+    @GetMapping("/selectEtudiantById/{id}")
+    public ResponseEntity<Utilisateur> selectEtudiantById(@PathVariable Long id){
+        Utilisateur utilisateur = svc.selectEtudiantById(id);
+        return ResponseEntity.ok(utilisateur);
+    }
+
+    @GetMapping("/config")
+    public Map<String, String> getConfig(){
+        Map<String, String> param = new HashMap<>();
+        param.put("thread", Thread.currentThread().getName());
+        return param;
     }
 }
