@@ -36,6 +36,5 @@ public class Cours {
     private SEMESTRE semestre;
 
     @Enumerated(EnumType.STRING)
-    @NotNull
     private DEL_YN del_yn; //Suppression O/N
 }

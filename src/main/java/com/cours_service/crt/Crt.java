@@ -11,7 +11,6 @@ import java.util.List;
 
 @RestController
 @AllArgsConstructor
-@RequestMapping("/cours-service")
 public class Crt {
 
     private Svc svc;
@@ -43,6 +42,12 @@ public class Crt {
     @GetMapping("/selectCoursByCourseName/{courseName}")
     public ResponseEntity<Cours> selectCoursByCourseName(@PathVariable String courseName){
         Cours cours = svc.selectCoursByCourseName(courseName);
+        return ResponseEntity.ok(cours);
+    }
+
+    @GetMapping("/selectCoursById/{id}")
+    public ResponseEntity<Cours> selectCoursById(@PathVariable Long id){
+        Cours cours = svc.selectCoursById(id);
         return ResponseEntity.ok(cours);
     }
 

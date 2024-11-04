@@ -63,9 +63,10 @@ public class Svc {
             coursOptional.get().setCredits(cours.getCredits());
             coursOptional.get().setNbreHeure(cours.getNbreHeure());
             coursOptional.get().setSemestre(cours.getSemestre());
+            coursOptional.get().setDel_yn(DEL_YN.N);
         }
         Cours c = coursRepository.findBycourseName(coursOptional.get().getCourseName());
-        if (c!=null) throw new RuntimeException("Le cours "+ coursOptional.get().getCourseName()+ "existe deja !!!");
+        if (c!=null) throw new RuntimeException("Le cours >>>"+ coursOptional.get().getCourseName()+ "<<<<existe deja !!!");
         c = coursRepository.save(coursOptional.get());
         return c ;
     }
@@ -97,10 +98,10 @@ public class Svc {
     /**
      * Detail sur un cours
      * @param id
-
+     */
     public Cours selectCoursById(Long id){
         Optional<Cours> cours = coursRepository.findById(id);
         if (cours.isEmpty()) throw new RuntimeException("Aucun cours avec l'identifiant "+ id);
         return cours.orElse(null);
-    }*/
+    }
 }
