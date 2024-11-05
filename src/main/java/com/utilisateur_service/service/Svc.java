@@ -1,16 +1,23 @@
 package com.utilisateur_service.service;
 
 import com.utilisateur_service.entity.Utilisateur;
+import com.utilisateur_service.entity.Validation;
 import com.utilisateur_service.enumeration.DEL_YN;
 import com.utilisateur_service.enumeration.Role;
 import com.utilisateur_service.repository.UtilisateurRepository;
+import com.utilisateur_service.repository.ValidationRepository;
 import lombok.AllArgsConstructor;
+import org.springframework.mail.SimpleMailMessage;
+import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import java.time.Instant;
+import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.Random;
 
 /**
  * Gérer les informations des Utilisateur
@@ -23,22 +30,24 @@ import java.util.Optional;
 public class Svc {
 
     private UtilisateurRepository utilisateurRepository;
+    private ValidationRepository validationRepository;
     private PasswordEncoder passwordEncoder;
+    private JavaMailSender javaMailSender;
 
     /**
      * Methode pour enregistrer un utilisateur
      * @param utilisateur
      */
-    public Utilisateur insertUtilisateur(Utilisateur utilisateur){
+    public void insertUtilisateur(Utilisateur utilisateur){
+        if (!utilisateur.getEmail().contains("@")) throw new RuntimeException("addresse email invalide");
+        if (!utilisateur.getEmail().contains(".")) throw new RuntimeException("addresse email invalide");
+
         Utilisateur u = utilisateurRepository.findByEmail(utilisateur.getEmail());
-        if (u!=null) {
-            throw new RuntimeException("L'addresse email>>>>> " + u.getEmail() + ">>>>>>>existe deja");
-        }else {
-            utilisateur.setDel_yn(DEL_YN.N);
-            utilisateur.setPassword(passwordEncoder.encode(utilisateur.getPassword()));
-            u = utilisateurRepository.save(utilisateur);
-        }
-        return u;
+        if (u!=null) throw new RuntimeException("L'addresse email>>>>> " + u.getEmail() + ">>>>>>>existe deja");
+
+        utilisateur.setDel_yn(DEL_YN.N);
+        utilisateur.setPassword(passwordEncoder.encode(utilisateur.getPassword()));
+        this.validationCompte(utilisateurRepository.save(utilisateur));
     }
 
     /**
@@ -78,7 +87,6 @@ public class Svc {
                 }
             }
         }
-
         return users;
     }
 
@@ -115,8 +123,7 @@ public class Svc {
             u.get().setId(utilisateur.getId());
             u.get().setEmail(utilisateur.getEmail());
             u.get().setRole(utilisateur.getRole());
-            u.get().setPassword(utilisateur.getPassword());
-            u.get().setFirstName(utilisateur.getFirstName());
+            //u.get().setPassword(utilisateur.getPassword());
             u.get().setLastName(utilisateur.getLastName());
             u.get().setBirthDate(utilisateur.getBirthDate());
             u.get().setDel_yn(DEL_YN.N);
@@ -169,5 +176,45 @@ public class Svc {
             }
         }
         return null;
+    }
+
+    /**
+     * methode de validation de compte
+     * @param utilisateur
+     * @autho nnr
+     */
+
+    public void validationCompte(Utilisateur utilisateur){
+        Validation validation = new Validation();
+
+        validation.setUtilisateur(utilisateur);
+        Instant creation = Instant.now();
+        validation.setCreation(creation);
+        Instant expiration = creation.plus(10, ChronoUnit.MINUTES);
+        validation.setExpiration(expiration);
+
+        Random random = new Random();
+        int number= random.nextInt(9999);
+        String code = String.format("%06d",number);
+        validation.setCode(code);
+        this.envoidMail(validationRepository.save(validation));
+    }
+
+    /**
+     * methode envoi de mail
+     * @param validation
+     *
+     */
+    public void envoidMail(Validation validation){
+        SimpleMailMessage message = new SimpleMailMessage();
+        message.setFrom("nnr@gmail.com");
+        message.setTo(validation.getUtilisateur().getEmail());
+        message.setSubject("votre code d'activation");
+
+        String msg = String.format("bonjour , %s <br> votre code d'activation est. %s A bientot", validation.getUtilisateur().getLastName(), validation.getCode());
+        message.setText(msg);
+
+        javaMailSender.send(message);
+
     }
 }

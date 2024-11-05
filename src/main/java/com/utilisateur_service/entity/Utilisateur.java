@@ -11,21 +11,24 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.core.userdetails.UserDetails;
 
 import java.time.LocalDate;
+import java.util.Collection;
+import java.util.List;
 
 @Entity
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class Utilisateur {
+public class Utilisateur implements UserDetails {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-
-    private String firstName;
 
     @NotNull(message = "le nom est obligatoire")
     private String lastName;
@@ -45,4 +48,41 @@ public class Utilisateur {
     @Enumerated(EnumType.STRING)
     private DEL_YN del_yn; //Suppression O/N
 
+    @Column(nullable = false)
+    private boolean actif = false;
+
+    @Override
+    public Collection<? extends GrantedAuthority> getAuthorities() {
+        return List.of(new SimpleGrantedAuthority("role"+ this.getRole()));
+    }
+
+    @Override
+    public String getUsername() {
+        return this.email;
+    }
+
+    @Override
+    public String getPassword() {
+        return this.password;
+    }
+
+    @Override
+    public boolean isAccountNonExpired() {
+        return this.actif;
+    }
+
+    @Override
+    public boolean isAccountNonLocked() {
+        return this.actif;
+    }
+
+    @Override
+    public boolean isCredentialsNonExpired() {
+        return this.actif;
+    }
+
+    @Override
+    public boolean isEnabled() {
+        return this.actif;
+    }
 }

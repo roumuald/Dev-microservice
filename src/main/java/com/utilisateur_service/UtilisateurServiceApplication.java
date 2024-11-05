@@ -24,7 +24,7 @@ public class UtilisateurServiceApplication {
 	CommandLineRunner start(UtilisateurRepository utilisateurRepository){
 		return args -> {
 			Utilisateur u1 = utilisateurRepository.save(Utilisateur.builder()
-					.firstName("nnr").lastName("nnr").role(Role.ETUDIANT).email("nnr@gmail.com")
+					.lastName("nnr").role(Role.ETUDIANT).email("nnr@gmail.com")
 					.birthDate(LocalDate.now()).del_yn(DEL_YN.N).password("nnr").build());
 		};
 	}

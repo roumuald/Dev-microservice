@@ -7,3 +7,21 @@ services:
       - 'POSTGRES_USER=nnr'
     ports:
       - '1500:5432'
+
+  pgadmin:
+    image: dpage/pgadmin4
+    container_name: pgadmin_container
+    environment:
+      PGADMIN_DEFAULT_EMAIL: admin@admin.com  # Identifiants de connexion pgAdmin
+      PGADMIN_DEFAULT_PASSWORD: admin  # Mot de passe de connexion pgAdmin
+    ports:
+      - "1600:80"  # Expose pgAdmin on port 1600
+    depends_on:
+      - postgres
+
+  smtp4dev:
+    image: rnwood/smtp4dev:v3
+    container_name: envoi_mail
+    ports:
+      - "1025:25"       # Port SMTP standard pour l'envoi d'emails
+      - "8082:80"       # Interface web de smtp4dev

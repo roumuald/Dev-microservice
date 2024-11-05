@@ -18,9 +18,9 @@ public class Crt {
     private Svc svc;
 
     @PostMapping("/inscription")
-    public ResponseEntity<Utilisateur> insertUtilisateur(@Valid @RequestBody Utilisateur utilisateur){
-        Utilisateur u = svc.insertUtilisateur(utilisateur);
-        return ResponseEntity.ok(u);
+    public ResponseEntity<Void> insertUtilisateur(@Valid @RequestBody Utilisateur utilisateur){
+        svc.insertUtilisateur(utilisateur);
+        return ResponseEntity.ok().build();
     }
 
     @GetMapping("/selectEtudiant")
