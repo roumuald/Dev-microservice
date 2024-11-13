@@ -78,4 +78,11 @@ public class Crt {
         param.put("thread", Thread.currentThread().getName());
         return param;
     }
+
+
+    @PostMapping("/activation")
+    public ResponseEntity<Void> activation(@Valid @RequestBody Map<String, String> activation){
+        svc.activationCompte(activation);
+        return ResponseEntity.ok().build();
+    }
 }

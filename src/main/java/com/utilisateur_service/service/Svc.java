@@ -14,10 +14,7 @@ import org.springframework.stereotype.Service;
 
 import java.time.Instant;
 import java.time.temporal.ChronoUnit;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
-import java.util.Random;
+import java.util.*;
 
 /**
  * Gérer les informations des Utilisateur
@@ -217,4 +214,34 @@ public class Svc {
         javaMailSender.send(message);
 
     }
+
+    /**
+     * methode d'activation de compte
+     * @param
+     */
+    public void activationCompte(Map<String, String> activation) {
+        Optional<Validation> validation = validationRepository.findByCode(activation.get("code"));
+        if (validation.isEmpty()){
+            throw new RuntimeException("code est invalide");
+        }
+
+        if (Instant.now().isAfter(validation.get().getExpiration())){
+            throw new RuntimeException("votre code est expire");
+        }
+
+        Optional<Utilisateur> utilisateurActive =this.utilisateurRepository.findById(validation.get().getUtilisateur().getId());
+        if (utilisateurActive.isEmpty()){
+            throw new RuntimeException("Utilisateur inconnu");
+        }
+        utilisateurActive.get().setActif(true);
+        this.utilisateurRepository.save(utilisateurActive.get());
+    }
+
+    /*public Validation lireEnFonctionDuCode(String code){
+        Optional<Validation> validation = validationRepository.findByCode(code);
+        if (validation.isEmpty()){
+            throw new RuntimeException("code est invalide");
+        }
+        return validation.get();
+    }*/
 }
